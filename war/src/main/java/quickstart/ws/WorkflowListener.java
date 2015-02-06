@@ -1,13 +1,15 @@
 package quickstart.ws;
 
-import javax.enterprise.context.RequestScoped;
-
+import org.apache.wicket.Application;
+import org.apache.wicket.ThreadContext;
+import org.apache.wicket.protocol.ws.WebSocketSettings;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
+import org.apache.wicket.protocol.ws.api.registry.IKey;
+import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import quickstart.MySession;
 import quickstart.api.IWorkflowListener;
 import quickstart.ejb.WorkflowBean;
 
@@ -16,15 +18,18 @@ import quickstart.ejb.WorkflowBean;
  *
  */
 
-@RequestScoped
-// @SessionScoped
+//@RequestScoped
 public class WorkflowListener implements IWorkflowListener
 {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(WorkflowListener.class);
+	private final String sessionId;
+	private final IKey pageId;
 
-	public WorkflowListener()
+	public WorkflowListener(String sessionId, IKey pageId)
 	{
+		this.sessionId = sessionId;
+		this.pageId = pageId;
 	}
 
 	protected IWebSocketConnection getWebSocketConnection()
@@ -32,7 +37,12 @@ public class WorkflowListener implements IWorkflowListener
 		// sync mode: OK
 		// async mode (@Asynchronous): javax.ejb.EJBException: org.apache.wicket.WicketRuntimeException: There is no application attached to current thread EJB default
 		// async mode (Executor/@SessionScoped): WELD-001303: No active contexts for scope type javax.enterprise.context.SessionScoped:
-		return MySession.get().getWebSocketConnection();
+		Application application = Application.get();
+		WebSocketSettings webSocketSettings = WebSocketSettings.Holder.get(application);
+		IWebSocketConnectionRegistry connectionRegistry = webSocketSettings.getConnectionRegistry();
+		IWebSocketConnection connection = connectionRegistry.getConnection(application, sessionId, pageId);
+		return connection;
+//		return MySession.get().getWebSocketConnection();
 	}
 
 	@Override
@@ -40,11 +50,20 @@ public class WorkflowListener implements IWorkflowListener
 	{
 		LOG.info("WorkflowListener#onMessage: " + message);
 
-		IWebSocketConnection connection = this.getWebSocketConnection();
-
-		if (connection != null && connection.isOpen())
+		try
 		{
-			connection.sendMessage(new StatusMessage(String.valueOf(message)));
+			ThreadContext.setApplication(Application.get("cdi-sync"));
+
+			IWebSocketConnection connection = this.getWebSocketConnection();
+
+			if (connection != null && connection.isOpen())
+			{
+				connection.sendMessage(new StatusMessage(String.valueOf(message)));
+			}
+		}
+		finally
+		{
+			ThreadContext.detach();
 		}
 	}
 
@@ -53,11 +72,20 @@ public class WorkflowListener implements IWorkflowListener
 	{
 		LOG.info("WorkflowListener#onException: " + message);
 
-		IWebSocketConnection connection = this.getWebSocketConnection();
-
-		if (connection != null && connection.isOpen())
+		try
 		{
-			connection.sendMessage(new ExceptionMessage(String.valueOf(message)));
+			ThreadContext.setApplication(Application.get("cdi-sync"));
+
+			IWebSocketConnection connection = this.getWebSocketConnection();
+
+			if (connection != null && connection.isOpen())
+			{
+				connection.sendMessage(new ExceptionMessage(String.valueOf(message)));
+			}
+		}
+		finally
+		{
+			ThreadContext.detach();
 		}
 	}
 

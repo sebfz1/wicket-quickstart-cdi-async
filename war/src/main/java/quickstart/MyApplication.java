@@ -1,6 +1,12 @@
 package quickstart;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.wicket.Application;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
+import org.apache.wicket.ThreadContext;
 import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
@@ -15,7 +21,11 @@ public class MyApplication extends WebApplication
 	{
 		return (MyApplication) WebApplication.get();
 	}
-	
+
+
+	private final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+
 	@Override
 	protected void init()
 	{
@@ -35,5 +45,45 @@ public class MyApplication extends WebApplication
 	public MySession newSession(Request request, Response response)
 	{
 		return new MySession(request);
+	}
+
+	public void execute(Runnable task) {
+		executor.submit(new TasksRunnable(task));
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		executor.shutdown();
+		super.onDestroy();
+	}
+
+	private static class TasksRunnable implements Runnable {
+
+		private final Runnable task;
+		private final Application application;
+		private final Session session;
+
+		public TasksRunnable(Runnable task) {
+			this.task = task;
+
+			this.application = Application.get();
+			this.session = Session.exists() ? Session.get() : null;
+		}
+
+		@Override
+		public void run() {
+			try
+			{
+				ThreadContext.setApplication(application);
+				ThreadContext.setSession(session);
+				task.run();
+			} catch (Exception x)
+			{
+				x.printStackTrace();
+			} finally {
+				ThreadContext.detach();
+			}
+		}
 	}
 }
