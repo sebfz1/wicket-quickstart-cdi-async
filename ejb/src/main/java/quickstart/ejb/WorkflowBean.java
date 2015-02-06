@@ -3,8 +3,9 @@ package quickstart.ejb;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +14,10 @@ import quickstart.api.IWorkflowListener;
 import quickstart.api.Workflow;
 import quickstart.api.WorkflowException;
 
-@Stateless
+//@Stateless
 
 // @Stateful
-// @RequestScoped
+@ApplicationScoped
 // @TransactionManagement(TransactionManagementType.BEAN)
 public class WorkflowBean implements Workflow
 {
@@ -40,19 +41,16 @@ public class WorkflowBean implements Workflow
 
 	@Override
 	/* async */
-	@Asynchronous
+//	@Asynchronous
 	public void start(final IWorkflowListener listener)
 	{
-		LOG.info("Worflow started...");
-
-		// ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		LOG.info("Workflow started...");
 
 		for (IWorkflowStep step : this.newWorkflowSteps(listener))
 		{
 			try
 			{
 				step.run(); /* sync */
-				// executor.execute(step); /* async */
 			}
 			catch (WorkflowException e)
 			{
@@ -65,7 +63,7 @@ public class WorkflowBean implements Workflow
 
 	private List<IWorkflowStep> newWorkflowSteps(final IWorkflowListener listener)
 	{
-		List<IWorkflowStep> list = new LinkedList<IWorkflowStep>();
+		List<IWorkflowStep> list = new LinkedList<>();
 		list.add(newWorkFlowStep0(listener));
 
 		return list;

@@ -1,9 +1,11 @@
 package quickstart.api;
 
+import java.io.Serializable;
+
 import javax.ejb.Local;
 
-@Local
-public interface Workflow
+//@Local
+public interface Workflow extends Serializable
 {
 	/**
 	 * 
