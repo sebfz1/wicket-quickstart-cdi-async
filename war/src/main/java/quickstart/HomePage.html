@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+</head>
+<body>
+	<wicket:extend>
+		<div wicket:id="feedback"></div>
+		<br />
+		<form wicket:id="form">
+			If the job is running in async mode, a feedback message should appear immediately<br />
+			<button wicket:id="button">Start Job</button>
+		</form>
+		<br />
+		Go to the other page while the job is running: <br />
+		<a wicket:id="goto" href="javascript;">Jump to other page</a>
+	</wicket:extend>
+</body>
+</html>
