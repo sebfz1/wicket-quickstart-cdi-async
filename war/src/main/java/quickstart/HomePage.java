@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import quickstart.api.Workflow;
+import quickstart.ws.WorkflowListener;
 import quickstart.ws.WorkflowService;
 
 import com.googlecode.wicket.kendo.ui.form.button.AjaxButton;
@@ -58,8 +59,7 @@ public class HomePage extends AbstractBasePage
 
 		if (workflow != null)
 		{
-			workflow.start(service.getListener());
-			// workflow.start(new WorkflowListener(MySession.get().getWebSocketInfo()));
+			 workflow.start(new WorkflowListener());
 		}
 		else
 		{

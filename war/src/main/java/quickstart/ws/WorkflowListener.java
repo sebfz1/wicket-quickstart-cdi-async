@@ -1,7 +1,6 @@
 package quickstart.ws;
 
-import javax.enterprise.context.RequestScoped;
-
+import org.apache.wicket.ThreadContext;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.slf4j.Logger;
@@ -15,24 +14,30 @@ import quickstart.ejb.WorkflowBean;
  * Provides the listener to be supplied to the {@link WorkflowBean}
  *
  */
-
-@RequestScoped
-// @SessionScoped
 public class WorkflowListener implements IWorkflowListener
 {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(WorkflowListener.class);
 
+	private final ThreadContext threadContext;
+
 	public WorkflowListener()
 	{
+		this.threadContext = ThreadContext.get(false);
 	}
 
-	protected IWebSocketConnection getWebSocketConnection()
+	protected synchronized IWebSocketConnection getWebSocketConnection()
 	{
-		// sync mode: OK
-		// async mode (@Asynchronous): javax.ejb.EJBException: org.apache.wicket.WicketRuntimeException: There is no application attached to current thread EJB default
-		// async mode (Executor/@SessionScoped): WELD-001303: No active contexts for scope type javax.enterprise.context.SessionScoped:
-		return MySession.get().getWebSocketConnection();
+		try
+		{
+			ThreadContext.restore(this.threadContext);
+
+			return MySession.get().getWebSocketConnection();
+		}
+		finally
+		{
+			ThreadContext.detach();
+		}
 	}
 
 	@Override
@@ -59,6 +64,7 @@ public class WorkflowListener implements IWorkflowListener
 		{
 			connection.sendMessage(new ExceptionMessage(String.valueOf(message)));
 		}
+
 	}
 
 	// classes //

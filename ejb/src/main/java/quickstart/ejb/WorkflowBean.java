@@ -14,9 +14,8 @@ import quickstart.api.Workflow;
 import quickstart.api.WorkflowException;
 
 @Stateless
-
 // @Stateful
-// @RequestScoped
+// @ApplicationScoped
 // @TransactionManagement(TransactionManagementType.BEAN)
 public class WorkflowBean implements Workflow
 {
