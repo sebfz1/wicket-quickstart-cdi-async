@@ -1,6 +1,5 @@
 package quickstart.ws;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 

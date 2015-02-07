@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,8 @@ import quickstart.api.WorkflowException;
 // @TransactionManagement(TransactionManagementType.BEAN)
 public class WorkflowBean implements Workflow
 {
+	private static final long serialVersionUID = 1L;
+
 	public interface IWorkflowStep extends Runnable
 	{
 	}
@@ -41,7 +41,7 @@ public class WorkflowBean implements Workflow
 
 	@Override
 	/* async */
-//	@Asynchronous
+	// @Asynchronous
 	public void start(final IWorkflowListener listener)
 	{
 		LOG.info("Workflow started...");
