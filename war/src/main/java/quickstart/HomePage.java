@@ -4,17 +4,13 @@ import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.protocol.ws.api.registry.IKey;
-import org.apache.wicket.protocol.ws.api.registry.PageIdKey;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import quickstart.api.Workflow;
-import quickstart.ws.WorkflowListener;
 import quickstart.ws.WorkflowService;
 
 import com.googlecode.wicket.kendo.ui.form.button.AjaxButton;
+import com.googlecode.wicket.kendo.ui.markup.html.link.BookmarkablePageLink;
 import com.googlecode.wicket.kendo.ui.panel.KendoFeedbackPanel;
 
 public class HomePage extends AbstractBasePage
@@ -53,34 +49,17 @@ public class HomePage extends AbstractBasePage
 			}
 		});
 
-		this.add(new Link("goto") {
-
-			@Override
-			public void onClick()
-			{
-				setResponsePage(new MyPage(getPageReference()));
-			}
-		});
+		this.add(new BookmarkablePageLink<Void>("goto", MyPage.class));
 	}
 
 	private void onStart(AjaxRequestTarget target)
 	{
-		final Workflow workflow = service.getWorkflow();
-		final String sessionId = getSession().getId();
-		final IKey pageId = new PageIdKey(getPageId());
+		Workflow workflow = service.getWorkflow();
 
 		if (workflow != null)
 		{
-			Runnable task = new Runnable()
-			{
-				@Override
-				public void run()
-				{
-
-					workflow.start(new WorkflowListener(sessionId, pageId));
-				}
-			};
-			MyApplication.get().execute(task);
+			workflow.start(service.getListener());
+			// workflow.start(new WorkflowListener(MySession.get().getWebSocketInfo()));
 		}
 		else
 		{

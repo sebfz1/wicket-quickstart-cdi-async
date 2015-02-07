@@ -1,26 +1,18 @@
 package quickstart;
 
-import org.apache.wicket.PageReference;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import com.googlecode.wicket.kendo.ui.markup.html.link.BookmarkablePageLink;
 
 public class MyPage extends AbstractBasePage
 {
 	private static final long serialVersionUID = 1L;
 
-	public MyPage(final PageReference reference)
+	public MyPage(PageParameters parameters)
 	{
-		super(new PageParameters());
-		// button //
-		this.add(new Link("back") {
+		super(parameters);
 
-			@Override
-			public void onClick()
-			{
-				setResponsePage(reference.getPage());
-			}
-		});
+		// button //
+		this.add(new BookmarkablePageLink<Void>("back", HomePage.class));
 	}
 }
