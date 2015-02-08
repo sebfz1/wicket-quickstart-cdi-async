@@ -46,16 +46,16 @@ public class HomePage extends AbstractBasePage
 				this.info("Started!");
 				target.add(feedback);
 
-				onStart(target);
+				HomePage.this.start(target);
 			}
 		});
 
 		this.add(new BookmarkablePageLink<Void>("goto", MyPage.class));
 	}
 
-	private void onStart(AjaxRequestTarget target)
+	private void start(AjaxRequestTarget target)
 	{
-		Workflow workflow = service.getWorkflow();
+		Workflow workflow = this.service.getWorkflow();
 
 		if (workflow != null)
 		{

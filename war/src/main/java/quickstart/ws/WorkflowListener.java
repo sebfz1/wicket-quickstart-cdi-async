@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import quickstart.MySession;
 import quickstart.api.IWorkflowListener;
-import quickstart.ejb.WorkflowBean;
+import quickstart.api.Workflow;
 
 /**
- * Provides the listener to be supplied to the {@link WorkflowBean}
+ * Provides the listener to be supplied to the {@link Workflow}
  *
  */
 public class WorkflowListener implements IWorkflowListener
@@ -19,6 +19,13 @@ public class WorkflowListener implements IWorkflowListener
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(WorkflowListener.class);
 
+	/**
+	 * Indicates whether the job is designed to be run in async mode.<br />
+	 * It seems that it cannot be guessed by ThreadContext#exists(), probably because of the Session#get() which somehow shortcuts the logic
+	 */
+	private static final boolean ASYNCHRONOUS = true;
+
+	/** the current thread context */
 	private final ThreadContext threadContext;
 
 	public WorkflowListener()
@@ -26,19 +33,29 @@ public class WorkflowListener implements IWorkflowListener
 		this.threadContext = ThreadContext.get(false);
 	}
 
-	protected synchronized IWebSocketConnection getWebSocketConnection()
+	// Methods //
+
+	private synchronized IWebSocketConnection getWebSocketConnection()
 	{
 		try
 		{
-			ThreadContext.restore(this.threadContext);
+			if (ASYNCHRONOUS)
+			{
+				ThreadContext.restore(this.threadContext);
+			}
 
 			return MySession.get().getWebSocketConnection();
 		}
 		finally
 		{
-			ThreadContext.detach();
+			if (ASYNCHRONOUS)
+			{
+				ThreadContext.detach();
+			}
 		}
 	}
+
+	// Events //
 
 	@Override
 	public void onMessage(String message)
@@ -67,7 +84,7 @@ public class WorkflowListener implements IWorkflowListener
 
 	}
 
-	// classes //
+	// Classes //
 
 	public static class StatusMessage implements IWebSocketPushMessage
 	{

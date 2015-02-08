@@ -42,13 +42,6 @@ public abstract class AbstractBasePage extends WebPage
 		this.add(this.newWebSocketBehavior());
 	}
 
-	// Properties //
-
-	public Notification getNotification()
-	{
-		return this.notification;
-	}
-
 	// Factories //
 
 	private final WebSocketBehavior newWebSocketBehavior()
@@ -72,14 +65,14 @@ public abstract class AbstractBasePage extends WebPage
 				{
 					String value = ((StatusMessage) message).getStatus();
 
-					getNotification().show(handler, value, Notification.INFO);
+					notification.show(handler, value, Notification.INFO);
 				}
 
 				if (message instanceof ExceptionMessage)
 				{
 					String value = ((ExceptionMessage) message).getException();
 
-					getNotification().show(handler, value, Notification.ERROR);
+					notification.show(handler, value, Notification.ERROR);
 				}
 			}
 

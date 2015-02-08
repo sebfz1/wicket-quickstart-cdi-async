@@ -81,7 +81,7 @@ public class WorkflowBean implements Workflow
 				{
 					for (int i = 0; i <= 100; i += 10)
 					{
-						LOG.info("IWorkflowStep#run " + i);
+						LOG.info("WorkflowBean#IWorkflowStep#run " + i);
 
 						listener.onMessage(String.format(MESSAGE_PATTERN, "Workflow", "Processing...", i));
 						Thread.sleep(2000);
