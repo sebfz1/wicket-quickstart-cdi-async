@@ -10,8 +10,9 @@
 	</parent>
 
 	<artifactId>quickstart-ejb</artifactId>
-	<packaging>ejb</packaging>
+	<packaging>jar</packaging>
 
+    <!--
 	<build>
 		<plugins>
 			<plugin>
@@ -24,5 +25,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	-->
 
 </project>

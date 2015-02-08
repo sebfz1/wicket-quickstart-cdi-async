@@ -9,5 +9,10 @@ public interface Workflow
 	 * 
 	 * @param listener the {@link IWorkflowListener}
 	 */
-	void start(final IWorkflowListener listener);
+	void startAsynchronous(final IWorkflowListener listener);
+
+    void startExecutorService(final IWorkflowListener listener);
+
+    void startDeltaSpike(final IWorkflowListener listener);
+
 }
