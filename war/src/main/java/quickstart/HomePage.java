@@ -1,16 +1,18 @@
 package quickstart;
 
-import com.googlecode.wicket.kendo.ui.form.button.AjaxButton;
-import com.googlecode.wicket.kendo.ui.markup.html.link.BookmarkablePageLink;
-import com.googlecode.wicket.kendo.ui.panel.KendoFeedbackPanel;
+import javax.inject.Inject;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import quickstart.api.Workflow;
 import quickstart.ws.WorkflowListener;
 import quickstart.ws.WorkflowService;
 
-import javax.inject.Inject;
+import com.googlecode.wicket.kendo.ui.form.button.AjaxButton;
+import com.googlecode.wicket.kendo.ui.markup.html.link.BookmarkablePageLink;
+import com.googlecode.wicket.kendo.ui.panel.KendoFeedbackPanel;
 
 public class HomePage extends AbstractBasePage
 {
@@ -57,7 +59,9 @@ public class HomePage extends AbstractBasePage
 
 		if (workflow != null)
 		{
-			 workflow.startDeltaSpike(new WorkflowListener());
+			// workflow.startAsynchronous(new WorkflowListener());
+			// workflow.startExecutorService(new WorkflowListener());
+			workflow.startDeltaSpike(new WorkflowListener());
 		}
 		else
 		{
