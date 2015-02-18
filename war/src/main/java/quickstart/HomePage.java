@@ -59,9 +59,8 @@ public class HomePage extends AbstractBasePage
 
 		if (workflow != null)
 		{
-			// workflow.startAsynchronous(new WorkflowListener());
-			// workflow.startExecutorService(new WorkflowListener());
-			workflow.startDeltaSpike(new WorkflowListener());
+			// workflow.startAsynchronous(new WorkflowListener(true));
+			workflow.startDeltaSpike(new WorkflowListener(true));
 		}
 		else
 		{

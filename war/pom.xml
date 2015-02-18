@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>quickstart war</name>
@@ -11,7 +12,7 @@
 
 	<artifactId>quickstart-war</artifactId>
 	<packaging>war</packaging>
-	
+
 	<dependencies>
 
 		<!-- WICKET -->
@@ -32,7 +33,7 @@
 			<artifactId>wicket-cdi-1.1</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		
+
 		<!-- WICKET WEBSOCKET -->
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
@@ -45,7 +46,7 @@
 			<artifactId>wicket-native-websocket-javax</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		
+
 		<!-- WICKET KENDO-UI -->
 		<dependency>
 			<groupId>com.googlecode.wicket-jquery-ui</groupId>
@@ -57,13 +58,12 @@
 			<artifactId>wicket-kendo-ui-theme-default</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		
+
 		<!-- PROJECT -->
 		<dependency>
 			<groupId>net.7thweb.wicket</groupId>
 			<artifactId>quickstart-ejb</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<type>ejb</type>
 			<scope>provided</scope>
 		</dependency>
 
@@ -84,12 +84,12 @@
 			</resource>
 		</resources>
 
-        <plugins>
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.0.2.Final</version>
-            </plugin>
-        </plugins>
+		<plugins>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>1.0.2.Final</version>
+			</plugin>
+		</plugins>
 	</build>
 </project>

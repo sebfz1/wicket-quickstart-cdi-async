@@ -45,7 +45,6 @@
 					<includeLibInApplicationXml>true</includeLibInApplicationXml>
 
 					<modules>
-
 						<ejbModule>
 							<groupId>net.7thweb.wicket</groupId>
 							<artifactId>quickstart-ejb</artifactId>

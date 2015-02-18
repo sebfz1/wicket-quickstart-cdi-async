@@ -19,18 +19,24 @@ public class WorkflowListener implements IWorkflowListener
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(WorkflowListener.class);
 
+	/** the current thread context */
+	private final ThreadContext threadContext;
+
 	/**
 	 * Indicates whether the job is designed to be run in async mode.<br />
 	 * It seems that it cannot be guessed by ThreadContext#exists(), probably because of the Session#get() which somehow shortcuts the logic
 	 */
-	private static final boolean ASYNCHRONOUS = true;
-
-	/** the current thread context */
-	private final ThreadContext threadContext;
+	private final boolean asynchronous;
 
 	public WorkflowListener()
 	{
+		this(false);
+	}
+
+	public WorkflowListener(boolean asynchronous)
+	{
 		this.threadContext = ThreadContext.get(false);
+		this.asynchronous = asynchronous;
 	}
 
 	// Methods //
@@ -39,7 +45,7 @@ public class WorkflowListener implements IWorkflowListener
 	{
 		try
 		{
-			if (ASYNCHRONOUS)
+			if (this.asynchronous)
 			{
 				ThreadContext.restore(this.threadContext);
 			}
@@ -48,7 +54,7 @@ public class WorkflowListener implements IWorkflowListener
 		}
 		finally
 		{
-			if (ASYNCHRONOUS)
+			if (this.asynchronous)
 			{
 				ThreadContext.detach();
 			}

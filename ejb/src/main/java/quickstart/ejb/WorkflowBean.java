@@ -3,9 +3,10 @@ package quickstart.ejb;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.spi.CDI;
 
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import quickstart.api.IWorkflowListener;
 import quickstart.api.Workflow;
 import quickstart.api.WorkflowException;
+import quickstart.cdi.CdiContextAwareRunnable;
+import quickstart.cdi.CdiExecutorBean;
 
 @Stateless
 // @Stateful
@@ -30,9 +33,6 @@ public class WorkflowBean extends CdiExecutorBean implements Workflow
 	private static final String MESSAGE_PATTERN = "<b>%s</b><br/>%s <i>%d%%</i>";
 	private static final String EXCEPTION_PATTERN = "<b>%s</b><br/>%s";
 
-//	@Resource(mappedName = "java:comp/DefaultManagedExecutorService")
-//	private ManagedExecutorService executorService;
-
 	/**
 	 * Constructor
 	 */
@@ -42,31 +42,33 @@ public class WorkflowBean extends CdiExecutorBean implements Workflow
 
 	// Workflow //
 
-//	@Override
-//	/* async */
-//	public void startExecutorService(final IWorkflowListener listener)
-//	{
-//		executorService.submit(newWorkflowRunnable(listener));
-//	}
-//
-//	@Override
-//	@Asynchronous
-//	public void startAsynchronous(final IWorkflowListener listener)
-//	{
-//		try
-//		{
-//			newWorkflowRunnable(listener).call();
-//		}
-//		catch (Exception e)
-//		{
-//			LOG.error("Bähm {}", listener, e);
-//		}
-//	}
+	/**
+	 * Does actually not work
+	 */
+	@Override
+	@Asynchronous
+	public void startAsynchronous(final IWorkflowListener listener)
+	{
+		try
+		{
+			CdiContextAwareRunnable runnable = new CdiContextAwareRunnable(this.newWorkflowRunnable(listener));
+			// runnable.addContext(RequestScoped.class);
+			runnable.addContext(SessionScoped.class);
+			// runnable.addContext(ApplicationScoped.class);
+			runnable.addContext(ConversationScoped.class);
+
+			runnable.run();
+		}
+		catch (WorkflowException e)
+		{
+			LOG.error(e.getMessage(), e);
+		}
+	}
 
 	@Override
 	public void startDeltaSpike(IWorkflowListener listener)
 	{
-//		this.executorService.submit(this.newWorkflowRunnable(listener));
+		this.submit(this.newWorkflowRunnable(listener));
 	}
 
 	// Factories //
